@@ -15,17 +15,17 @@ router.use(function(req, res, next) {
 
 // more routes for our API will happen here
 
-// on routes that end in /fighters
+// on routes that end in /trainers
 //----------------------------------------------------------
 router.route('/')
 
-    // create a fighter (accessed at POST http://localhost:8080/api/fighters
+    // create a trainer (accessed at POST http://localhost:8080/api/trainers
     .post(function(req, res) {
         console.log('test');
-        var trainer = new Trainer();    // create a new instance of the Fighter model
-        trainer.name = req.body.name;   // set the fighters name (comes from request)
+        var trainer = new Trainer();    // create a new instance of the trainer model
+        trainer.name = req.body.name;   // set the trainers name (comes from request)
 
-        // save the fighter and check for errors
+        // save the trainer and check for errors
         trainer.save(function(err) {
             if (err)
                 res.send(err);
@@ -34,34 +34,70 @@ router.route('/')
         });
     })
 
-    // get all the fighters (accessed at GET http://localhost:8080/api/fighters)
+    // get all the trainers (accessed at GET http://localhost:8080/api/trainers)
     .get(function(req, res) {
-        Trainer.find(function(err, fighters) {
+        Trainer.find(function(err, trainers) {
             if (err)
                 res.send(err);
 
-            res.json(fighters);
+            res.json(trainers);
         });
     });
 
-// on routes that end in /fighters/:fighter_id
+// on routes that end in /trainers/:trainer_id
 //----------------------------------------------------------
-router.route('/:fighter_id')
+router.route('/:trainer_id')
 
-    // get the fighter with that id (accessed at GET http://localhost:8080/api/fighters/:fighter_id)
+    // get the trainer with that id (accessed at GET http://localhost:8080/api/trainers/:trainer_id)
     .get(function(req, res) {
-        console.log('Fighter ID route');
-        console.log(req.params.fighter_id);
-        Fighter.findById(req.params.fighter_id, function(err, fighter) {
+        console.log('Trainer ID route');
+        console.log(req.params.trainer_id);
+        Trainer.findById(req.params.trainer_id, function(err, trainer) {
             if (err)
                 res.send(err);
-            res.json(fighter);
+            res.json(trainer);
+        });
+    })
+
+    //update the trainer with this id
+    .put(function(req,res) {
+
+        // use our trainer model to find the trainer we want
+        Trainer.findById(req.params.trainer_id, function(err, trainer) {
+            if (err)
+                res.send(err);
+
+            trainer.name = req.body.name;   //update trainer info
+
+            //save info
+            trainer.save(function(err) {
+                if (err)
+                    res.send(err);
+
+
+                res.json({ message: 'trainer updated!'});
+            });
+        });
+    })
+
+    // delete the trainer with this id
+    .delete(function(req, res) {
+        Trainer.remove({
+            _id: req.params.trainer_id
+        }, function(err, trainer) {
+            if(err)
+                res.send(err);
+
+            res.json({ message: 'Successfully deleted trainer.'});
         });
     });
+
+// on routes that end in /trainers/:name
+//----------------------------------------------------------
 router.route('/name/:name')
 
     .get(function(req, res) {
-        console.log('Fighter name route');
+        console.log('Trainer name route');
         console.log(req.params.name);
     });
 

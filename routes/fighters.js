@@ -57,7 +57,43 @@ router.route('/:fighter_id')
                 res.send(err);
             res.json(fighter);
         });
+    })
+
+    //update the fighter with this id
+    .put(function(req,res) {
+
+    // use our Fighter model to find the fighter we want
+        Fighter.findById(req.params.fighter_id, function(err, fighter) {
+            if (err)
+                res.send(err);
+
+            fighter.name = req.body.name;   //update fighter info
+
+            //save info
+            fighter.save(function(err) {
+                if (err)
+                res.send(err);
+
+
+                res.json({ message: 'Fighter updated!'});
+            });
+        });
+    })
+
+// delete the fighter with this id
+    .delete(function(req, res) {
+        Fighter.remove({
+            _id: req.params.fighter_id
+        }, function(err, fighter) {
+            if(err)
+                res.send(err);
+
+            res.json({ message: 'Successfully deleted fighter.'});
+        });
     });
+
+// on routes that end in /fighters/:name
+//----------------------------------------------------------
 router.route('/name/:name')
 
     .get(function(req, res) {
